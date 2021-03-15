@@ -94,7 +94,7 @@ class EthereumConnector(BaseConnector):
 
         try:
             daemon = EventProcessor(self._config)
-            asyncio.get_event_loop().run_until_complete(daemon.start(
+            asyncio.get_event_loop().create_task(daemon.start(
                 listener,
                 workorder_event_handler_func,
                 account=None,
