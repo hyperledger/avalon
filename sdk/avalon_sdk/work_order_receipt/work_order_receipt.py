@@ -131,7 +131,7 @@ class WorkOrderReceiptRequest():
         Returns:
         JSON RPC work order update receipt request of type dictionary
         """
-        data = update_data
+        data = json.dumps(update_data)
         if update_type in [ReceiptCreateStatus.PROCESSED.value,
                            ReceiptCreateStatus.COMPLETED.value]:
             # Work Order Receipt status is set to be completed or processed,
