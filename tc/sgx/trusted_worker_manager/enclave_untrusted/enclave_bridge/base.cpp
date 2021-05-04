@@ -115,6 +115,13 @@ tcf_err_t tcf::enclave_api::base::Terminate() {
             for (tcf::enclave_api::Enclave& enc : g_Enclave) {
                 enc.Unload();
             }
+            // Empty out the vector of enclaves maintained
+            int q_size = g_Enclave.size();
+            for (int i=0; i< q_size; i++){
+                g_Enclave.pop_back();
+                g_EnclaveReadyQueue->pop();
+            }
+            //g_Enclave.clear();
             g_IsInitialized = false;
         }
     } catch (tcf::error::Error& e) {

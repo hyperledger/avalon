@@ -86,7 +86,8 @@ namespace tcf {
             if (this->enclaveId) {
                 // No power or busy retries here....
                 // We don't want to reinitialize just to shutdown.
-                sgx_destroy_enclave(this->enclaveId);
+                if (SGX_SUCCESS != sgx_destroy_enclave(this->enclaveId))
+                    tcf::Log(TCF_LOG_ERROR,"Enclave destroy failed.\n");
                 this->enclaveId = 0;
             }
         }  // Enclave::Unload

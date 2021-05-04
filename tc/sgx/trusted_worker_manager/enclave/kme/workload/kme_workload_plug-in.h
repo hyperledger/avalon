@@ -33,6 +33,40 @@ typedef struct WPEInfo {
 
     WPEInfo();
     WPEInfo(const ByteArray& _sk);
+    WPEInfo(const uint64_t _wo_c, const ByteArray& _sk);
+
+    /*
+    *  Serialize WPEInfo into a ByteArray, the member variables
+    *  delimited by a comma (,).
+    *
+    *  @returns Serialized WPEInfo as bytearray
+    *
+    */
+    ByteArray serialize(){
+        std::string serialized = std::to_string(workorder_count);
+        serialized += ",";
+        serialized += ByteArrayToStr(signing_key);
+
+        return StrToByteArray(serialized);
+    }
+
+    /*
+    *  Deserialize ByteArray to WPEInfo instance.
+    *
+    *  @param ba - Serialized WPEInfo instance as a ByteArray
+    *
+    */
+    void deserialize(ByteArray ba){
+        std::string str = ByteArrayToStr(ba);
+
+        std::string::size_type pos = str.find_first_of(',');
+
+        std::string count = str.substr(0, pos);
+        workorder_count = std::stoul(count.c_str());
+
+        std::string key = str.substr(pos+1);
+        signing_key = StrToByteArray(key);
+    }
 } WPEInfo;
 
 class KMEWorkloadProcessor: public WorkloadProcessorKME {
@@ -46,6 +80,22 @@ public:
     virtual ~KMEWorkloadProcessor(void) {}
 
     IMPL_WORKLOAD_PROCESSOR_CLONE(KMEWorkloadProcessor);
+
+    void GetStateReplicationId(
+        const std::vector<tcf::WorkOrderData>& in_work_order_data,
+        std::vector<tcf::WorkOrderData>& out_work_order_data);
+
+    void CreateStateReplicatonRequest(
+        const std::vector<tcf::WorkOrderData>& in_work_order_data,
+        std::vector<tcf::WorkOrderData>& out_work_order_data);
+
+    void GetStateReplica(
+        const std::vector<tcf::WorkOrderData>& in_work_order_data,
+        std::vector<tcf::WorkOrderData>& out_work_order_data);
+
+    void UpdateState(
+        const std::vector<tcf::WorkOrderData>& in_work_order_data,
+        std::vector<tcf::WorkOrderData>& out_work_order_data);
 
     void GetUniqueId(
         const std::vector<tcf::WorkOrderData>& in_work_order_data,
@@ -66,6 +116,10 @@ public:
         const ByteArray& work_order_id,
         const std::vector<tcf::WorkOrderData>& in_work_order_data,
         std::vector<tcf::WorkOrderData>& out_work_order_data) override;
+    std::string serializeSigKeyMap();
+    std::map<ByteArray, ByteArray> derializeSigKeyMap(std::string serialized);
+    std::string serializeEncKeyMap();
+    std::map<ByteArray, WPEInfo> derializeEncKeyMap(std::string serialized);
 
 private:
     int isSgxSimulator();

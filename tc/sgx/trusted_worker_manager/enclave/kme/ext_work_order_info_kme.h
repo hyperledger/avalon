@@ -32,6 +32,14 @@ enum KmeRegistrationStatus {
     ERR_UNIQUE_ID_NOT_MATCH = 7 /// WPE unique id didn't match
 };
 
+enum KmeReplicationReturnCode { /// KME Replication operation(state-uid, state-request, get-state, set-state) status
+    KME_REPL_OP_SUCCESS = 0, /// Operation successful
+    KME_REPL_OP_FAILED = 1, /// Operation failure
+    ERR_KME_REPL_UID_MISMATCH = 2, /// State UID did not match for requesting Replica KME
+    ERR_KME_REPL_NONCE_MISMATCH = 3, /// Nonce did not match for requesting Replica KME
+    ERR_KME_REPL_SIG_VERIF_FAILED = 4 /// State UID+Nonce signature mismatch
+};
+
 enum KmePreProcessStatus {
     ERR_WPE_MAX_WO_COUNT_REACHED = 1
 };

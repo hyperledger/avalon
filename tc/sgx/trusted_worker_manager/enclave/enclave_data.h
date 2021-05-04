@@ -64,7 +64,7 @@ private:
 protected:
     void SerializePrivateData(void);
     void SerializePublicData(void);
-    void DeserializeSealedData(const std::string& inSerializedEnclaveData);
+    void DeserializePrivateData(const std::string& inSerializedEnclaveData);
 
     tcf::crypto::sig::PublicKey public_signing_key_;
     tcf::crypto::sig::PrivateKey private_signing_key_;
@@ -79,7 +79,18 @@ protected:
     std::string serialized_public_data_;
 
 public:
-     static EnclaveData* getInstance(const uint8_t* inSealedData=nullptr) {
+    void updateEnclaveData(std::string decrypted_private_data) {
+        DeserializePrivateData(decrypted_private_data);
+        // Clear local variable storing secret(s)
+        decrypted_private_data.clear();
+
+        // Create encryption key signature
+        generate_encryption_key_signature();
+
+        SerializePrivateData();
+        SerializePublicData();
+    }
+    static EnclaveData* getInstance(const uint8_t* inSealedData=nullptr) {
         if(!instance) {
             if(inSealedData != nullptr)
                 instance = new EnclaveData(inSealedData);
@@ -149,5 +160,17 @@ public:
     size_t get_sealed_data_size(void) const {
         size_t sdsize = sgx_calc_sealed_data_size(0, get_private_data_size());
         return sdsize;
+    }
+
+    void get_sealed_data(uint8_t* outSealedEnclaveData) const {
+        sgx_attributes_t attribute_mask = {0xfffffffffffffff3, 0};
+        sgx_seal_data_ex(SGX_KEYPOLICY_MRENCLAVE, attribute_mask,
+            0,        // misc_mask
+            0,        // additional mac text length
+            nullptr,  // additional mac text
+            get_private_data_size(),
+            reinterpret_cast<const uint8_t*>(get_private_data().c_str()),
+            static_cast<uint32_t>(get_sealed_data_size()),
+            reinterpret_cast<sgx_sealed_data_t*>(outSealedEnclaveData));
     }
 };

@@ -22,6 +22,8 @@
 #include "tcf_error.h"
 #include "types.h"
 
+#include "log.h"
+
 #include "enclave_queue.h"
 
 

@@ -79,7 +79,7 @@ EnclaveData::EnclaveData(const uint8_t* inSealedData) {
         nullptr, 0, &decrypted_data[0], &decrypted_size);
     tcf::error::ThrowSgxError(ret, "Failed to unseal  data");
     std::string decrypted_data_string(reinterpret_cast<const char*>(&decrypted_data[0]));
-    DeserializeSealedData(decrypted_data_string);
+    DeserializePrivateData(decrypted_data_string);
     // Clear local variable storing secret(s)
     decrypted_data.clear();
     decrypted_data_string.clear();
@@ -92,7 +92,7 @@ EnclaveData::EnclaveData(const uint8_t* inSealedData) {
 }
 // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-void EnclaveData::DeserializeSealedData(const std::string& inSerializedEnclaveData) {
+void EnclaveData::DeserializePrivateData(const std::string& inSerializedEnclaveData) {
     std::string svalue;
     const char* pvalue = nullptr;
     size_t pvalue_len = 0;

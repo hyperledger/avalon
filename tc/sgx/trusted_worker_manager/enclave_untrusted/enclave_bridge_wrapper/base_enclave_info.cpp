@@ -66,3 +66,13 @@ BaseEnclaveInfo::~BaseEnclaveInfo() {
     } catch (...) {}
 
 }  // BaseEnclaveInfo::~BaseEnclaveInfo
+
+// XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+void BaseEnclaveInfo::TerminateEnclave() {
+    try {
+        tcf::Log(TCF_LOG_INFO, "Will terminate currently running enclave\n");
+        tcf::enclave_api::base::Terminate();
+    } catch (...) {
+        tcf::Log(TCF_LOG_ERROR, "Error terminating Avalon Intel SGX Enclave\n");
+    }
+}  // BaseEnclaveInfo::TerminateEnclave

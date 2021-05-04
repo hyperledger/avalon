@@ -27,6 +27,7 @@ public:
         const std::string& persisted_sealed_data,
         const int num_of_enclaves);
     virtual ~BaseEnclaveInfo();
+    void TerminateEnclave();
 
     std::string mr_enclave;         // hex encoding of the enclave measurement
     std::string basename;           // hex encoding of the basename
