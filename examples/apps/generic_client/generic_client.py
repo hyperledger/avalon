@@ -322,11 +322,9 @@ def Main(args=None):
                 \n {}".format(wo_params))
         sys.exit(-1)
 
-    signer = worker_signing.WorkerSign()
-    client_private_key = signer.generate_signing_key()
     if parser.requester_signature():
         # Add requester signature and requester verifying_key
-        if wo_params.add_requester_signature(client_private_key) is False:
+        if wo_params.add_requester_signature() is False:
             logging.info("Work order request signing failed")
             sys.exit(-1)
 

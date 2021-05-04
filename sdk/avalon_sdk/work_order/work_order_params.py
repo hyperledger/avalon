@@ -173,29 +173,31 @@ class WorkOrderParams():
                 0,
                 err)
 
-    def add_requester_signature(self, private_key):
+    def add_requester_signature(self):
         """
         Calculate the signature of the request
         as defined in Off-Chain Trusted Compute EEA spec 6.1.8.3
         and set the requesterSignature parameter in the request.
         """
-        signature = self.signer.sign_message(req_hash)
-        if status is True:
-            self.params_obj["requesterSignature"] = \
-                crypto_utility.byte_array_to_base64(signature)
-            # public signing key is shared to enclave manager to
-            # verify the signature.
-            # It is temporary approach to share the key with the worker.
-            verifying_key = self.signer.get_public_sign_key(private_key)
-            self.set_verifying_key(verifying_key)
-            return True
-        else:
+        self.signer.generate_signing_key()
+        try:
+            signature = self.signer.sign_message(self.request_hash)
+        except err:
             logger.error("Signing request failed")
             return False
+        self.params_obj["requesterSignature"] = \
+            crypto_utility.byte_array_to_base64(signature)
+        # public signing key is shared to enclave manager to
+        # verify the signature.
+        # It is temporary approach to share the key with the worker.
+        verifying_key = self.signer.get_public_sign_key()
+        self.set_verifying_key(verifying_key)
+        return True
 
     def set_verifying_key(self, verifying_key):
         """Set verifyingKey work order parameter."""
-        self.params_obj["verifyingKey"] = verifying_key
+        self.params_obj["verifyingKey"] = \
+            crypto_utility.byte_array_to_string(verifying_key)
 
     def add_in_data(self, data, data_hash=None,
                     encrypted_data_encryption_key=None, data_iv=None):
