@@ -16,7 +16,6 @@
 import sys
 import logging
 from Cryptodome.PublicKey import RSA
-from Cryptodome.Random import get_random_bytes
 from Cryptodome.Cipher import AES, PKCS1_OAEP
 from Cryptodome.Random import get_random_bytes
 
