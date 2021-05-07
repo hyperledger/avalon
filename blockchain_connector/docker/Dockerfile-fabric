@@ -116,6 +116,7 @@ RUN packages="cmake git swig"; \
       packages="$packages protobuf-compiler libprotobuf-dev software-properties-common dh-autoreconf ocaml xxd ocamlbuild"; \
     elif [ "$DISTRO" = "centos" ] ; then \
       packages="$packages libcurl-devel gcc-c++ which"; \
+      pip_packages="$pip_packages setuptools-rust"; \
     fi; \
     /project/avalon/scripts/install_packages -c install -q "$packages" -p "$pip_packages"
 
